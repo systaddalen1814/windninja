@@ -21,6 +21,9 @@ project(WindNinja)
 # Needed for FindNetCDF and GET_DATE()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+option(BUILD_DEB_PACKAGE "Build a debian package" OFF)
+mark_as_advanced(BUILD_DEB_PACKAGE)
+
 option(FIRELAB_PACKAGE "Build a windows installer with dlls from the firelab machine" OFF)
 mark_as_advanced(FIRELAB_PACKAGE)
 
@@ -549,6 +552,23 @@ set(CPACK_COMPONENT_INCLUDES_DISABLED TRUE)
 # *****************************************************************************
 # CPack call
 # *****************************************************************************
+if(BUILD_DEB_PACKAGE)
+    SET(MAJOR_VERSION 1)
+    SET(MINOR_VERSION 0)
+    SET(PATCH_VERSION 0)
+    SET(CPACK_GENERATOR "DEB")
+    SET(CPACK_PACKAGE_DESCRIPTION "WindNinja")
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "WindNinja is a high-resolution diagnostic wind model")
+    SET(CPACK_PACKAGE_VENDOR "Missoula Fire Sciences Laboratory")
+    SET(CPACK_PACKAGE_CONTACT "wind.ninja.support@gmail.com")
+    SET(CPACK_PACKAGE_VERSION_MAJOR "${MAJOR_VERSION}")
+    SET(CPACK_PACKAGE_VERSION_MINOR "${MINOR_VERSION}")
+    SET(CPACK_PACKAGE_VERSION_PATCH "${PATCH_VERSION}")
+    SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${MAJOR_VERSION}.${MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
+    SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${MAJOR_VERSION}.${MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
+    SET(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+endif(BUILD_DEB_PACKAGE)
+
 include(CPack)
 include(CTest)
 
