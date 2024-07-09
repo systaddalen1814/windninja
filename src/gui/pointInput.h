@@ -116,6 +116,10 @@ class pointInput : public QWidget
     //Handlers
     QHBoxLayout *ClippyToolLayout;
     QToolButton *refreshToolButton;
+
+    QToolButton *selectNoneButton;
+    QToolButton *selectAllButton;
+
     QLabel *clippit; //displays vital information
 
     QFrame *timeLine; //Creates a fancy line to seprate things out
@@ -157,7 +161,8 @@ class pointInput : public QWidget
     void displayInformation(int dataType);
     QDateTime readNinjaNowName(const char* fileName);
     void setOneStepTimeseries();
-    
+    void selectAll();
+    void selectNone();
   private slots:
     void readStationFiles(const QItemSelection &x ,const QItemSelection &y);
     void selChanged(const QItemSelection &x ,const QItemSelection &y); //Test Function

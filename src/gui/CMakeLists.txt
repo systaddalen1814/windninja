@@ -125,7 +125,8 @@ endif(WIN32)
 add_executable(WindNinja ${GUI_TYPE}
                          ${NINJA_GUI_INCLUDES_MOC} 
                          ${NINJA_GUI_RESOURCES}
-                         ${NINJA_GUI_SOURCES})
+                         ${NINJA_GUI_SOURCES}
+                         ${NINJA_GUI_INCLUDES})
 
 target_link_libraries(WindNinja ${LINK_LIBS})
 add_dependencies(WindNinja ninja)

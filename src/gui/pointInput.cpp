@@ -121,6 +121,18 @@ pointInput::pointInput( QWidget *parent ) : QWidget( parent )
     refreshToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     refreshToolButton->setVisible(true);
 
+    selectAllButton = new QToolButton(this); // this selects all items
+    selectAllButton->setText(tr("Select all"));
+    selectAllButton->setToolTip(tr("Selects all items"));
+    selectAllButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    selectAllButton->setVisible(true);
+
+    selectNoneButton= new QToolButton(this); // this selects no items
+    selectNoneButton->setText(tr("Select None"));
+    selectNoneButton->setToolTip(tr("Deselects all items"));
+    selectNoneButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    selectNoneButton->setVisible(true);
+
     clippit = new QLabel(tr("")); //This gets updated with important information about the simulation as station files are chosen
     clippit->setVisible(false);
 
@@ -133,8 +145,10 @@ pointInput::pointInput( QWidget *parent ) : QWidget( parent )
     timeLine2->setFrameShadow(QFrame::Sunken);
 
     ClippyToolLayout->addStretch(); //Moves it over to the other side
+    ClippyToolLayout->addWidget(selectAllButton);
+    ClippyToolLayout->addWidget(selectNoneButton);
     ClippyToolLayout->addWidget(refreshToolButton);
-//    ClippyToolLayout->addWidget(clippit);
+    //    ClippyToolLayout->addWidget(clippit);
 
 //####################################################
 //Stuff for timeseries runs...                       #
@@ -264,6 +278,13 @@ pointInput::pointInput( QWidget *parent ) : QWidget( parent )
             this, SLOT(readStationFiles(const QItemSelection &,const QItemSelection &))); //Update the selected stations when a user clicks something
     connect(numSteps,SIGNAL(valueChanged(int)),this,SLOT(setOneStepTimeseries())); //watch the number of steps incase it goes to 1
     stationFileName = ""; //Sets a default
+
+    connect(selectAllButton, SIGNAL(clicked()), //Refreshes new Format, deselects files
+            this, SLOT(selectAll()));
+
+    connect(selectNoneButton, SIGNAL(clicked()), //Refreshes new Format, deselects files
+            this, SLOT(selectNone()));
+
 }
 
 pointInput::~pointInput()
@@ -1017,3 +1038,14 @@ void pointInput::checkForModelData()
     treeView->setRootIndex(sfModel->index(wd.absolutePath()));
     treeView->resizeColumnToContents(0);
 }
+
+void pointInput::selectNone()
+{
+  treeView->selectionModel()->clear(); //Clear the models selections
+}
+
+void pointInput::selectAll()
+{
+  treeView->selectAll();
+}
+
