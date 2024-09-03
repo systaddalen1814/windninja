@@ -196,7 +196,7 @@ template<typename T>
 T Array2D<T>::min() const
 {
     T min;
-    min = std::numeric_limits<double>::max();
+    min = std::numeric_limits<T>::max();
 
     for(int i = rows - 1;i >= 0;i--)
     {

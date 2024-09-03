@@ -96,7 +96,8 @@ const char ** NomadsWxModel::FindModelKey( const char *pszFilename )
 {
     const char *pszVsiDir;
     VSIStatBufL sStat;
-    VSIStatL( pszFilename, &sStat );
+    int nResult = VSIStatL(pszFilename, &sStat);
+    assert(nResult == 0);
     if( VSI_ISDIR( sStat.st_mode ) )
         pszVsiDir = CPLStrdup( pszFilename );
     else if( strstr( pszFilename, ".zip" ) )
@@ -239,7 +240,8 @@ std::string NomadsWxModel::fetchForecast( std::string demFile, int nHours )
     int rc;
     VSIStatBufL sStat;
     memset( &sStat, 0, sizeof( VSIStatBufL ) );
-    VSIStatL( newPath.c_str(), &sStat );
+    int nResult = VSIStatL( newPath.c_str(), &sStat );
+    assert(nResult == 0);
     if( !VSI_ISDIR( sStat.st_mode ) )
         rc = VSIMkdir( newPath.c_str(), 0777 );
     const char *pszTmpFile = CPLGenerateTempFilename( "NINJA_FCST" );
@@ -337,7 +339,8 @@ NomadsWxModel::getTimeList( const char *pszVariable,
     char **papszFileList = NULL;
     char *pszPath;
     VSIStatBufL sStat;
-    VSIStatL( wxModelFileName.c_str(), &sStat );
+    int nResult = VSIStatL( wxModelFileName.c_str(), &sStat );
+    assert(nResult == 0);
     if( VSI_ISDIR( sStat.st_mode ) )
         pszPath = CPLStrdup( wxModelFileName.c_str() );
     else if( strstr( wxModelFileName.c_str(), ".zip" ) )
@@ -425,7 +428,8 @@ char * NomadsWxModel::NomadsFindForecast( const char *pszFilePath,
     int i, j;
     char **papszFileList = NULL;
     VSIStatBufL sStat;
-    VSIStatL( pszFilePath, &sStat );
+    int nResult = VSIStatL( pszFilePath, &sStat );
+    assert(nResult == 0);
     const char *pszPath;
     if( VSI_ISDIR( sStat.st_mode ) )
         pszPath = CPLStrdup( pszFilePath );

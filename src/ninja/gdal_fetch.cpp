@@ -244,8 +244,9 @@ SURF_FETCH_E GDALFetch::FetchBoundingBox(double *bbox, double resolution,
     int nNoDataCount = 0;
     for(int i = 0;i < nLines;i++)
     {
-        GDALRasterIO(hDstBand, GF_Read, 0, i, nPixels, 1, 
+        eErr = GDALRasterIO(hDstBand, GF_Read, 0, i, nPixels, 1,
                      padfScanline, nPixels, 1, GDT_Float64, 0, 0);
+        assert(eErr == CE_None);
         for(int j = 0; j < nPixels;j++)
         {
             if(CPLIsEqual(padfScanline[j], dfNoData))

@@ -112,8 +112,8 @@ void Elevation::readFromMemory(const double* dem, const int nXSize, const int nY
         {
             padfScanline[j] = dem[j + nXSize*(nYSize-i-1)];
         }
-        GDALRasterIO(hBand, GF_Write, 0, i, nXSize, 1, padfScanline, nXSize,
-                            1, GDT_Float64, 0, 0); 
+        eErr = GDALRasterIO(hBand, GF_Write, 0, i, nXSize, 1, padfScanline, nXSize, 1, GDT_Float64, 0, 0);
+        assert(eErr == CE_None);
     }
 
     GDALReadGrid(fileName, 1);
