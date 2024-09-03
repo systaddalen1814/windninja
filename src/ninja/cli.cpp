@@ -1724,7 +1724,8 @@ int windNinjaCLI(int argc, char* argv[])
                 return -1;
             }
             OGRSpatialReference oSRS;
-            oSRS.importFromWkt((char**)&pszWkt);
+            const char* pszWkt_const = pszWkt;
+            oSRS.importFromWkt(&pszWkt_const);
             if(oSRS.IsGeographic())
             {
                 // PCM - try to convert to UTM

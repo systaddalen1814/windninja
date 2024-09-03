@@ -1540,7 +1540,8 @@ int mainWindow::checkInputFile(QString fileName)
         const char *pszProjRef;
         OGRSpatialReference oSRS;
         pszProjRef = GDALProjRef.c_str();
-        oSRS.importFromWkt((char**)&pszProjRef);
+        const char* pszProjRef_const = pszProjRef;
+        oSRS.importFromWkt(&pszProjRef_const);
         if(GDALProjRef == "")
         {
             hasPrj = false;

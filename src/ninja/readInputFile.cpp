@@ -77,7 +77,8 @@ void ninja::readInputFile()
         //our output products in ESRI systems. ESRI WKT should be handled by most other GIS systems as well.
         OGRSpatialReference spatial_ref;
         char* pszPrjEsri;
-        spatial_ref.importFromWkt(&pszPrj);
+        const char* pszPrj_const = pszPrj;
+        spatial_ref.importFromWkt(&pszPrj_const);
         spatial_ref.morphToESRI();
         spatial_ref.exportToWkt(&pszPrjEsri);
 
@@ -204,11 +205,13 @@ void ninja::importLCP(GDALDataset *poDataset)
 
     //read in value at i, j and set dem value.
     double *padfScanline;
+    CPLErr err;
     padfScanline = new double[nC];
     for(int i = nR - 1;i >= 0;i--) 
     {
-        poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
+        err = poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
                  GDT_Float64, 0, 0);
+        assert(err == CE_None);
         for(int j = 0;j < nC;j++)
         {
             input.dem.set_cellValue(nR - 1 - i, j, padfScanline[j]);
@@ -277,20 +280,23 @@ void ninja::importLCP(GDALDataset *poDataset)
     {
         //get fuel model band and write scanline
         poBand = poDataset->GetRasterBand(4);
-        poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineFuelM, nC, 1,
+        err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineFuelM, nC, 1,
                  GDT_Int32, 0, 0);
+        assert(err == CE_None);
         //if canopy fuels are there, get the associated data
         if(hasCrownFuels)
         {
             //height
             poBand = poDataset->GetRasterBand(6);
-            poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyH, nC, 1,
+            err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyH, nC, 1,
                      GDT_Int32, 0, 0);
+            assert(err == CE_None);
         }
         //cover
         poBand = poDataset->GetRasterBand(5);
-        poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyC, nC, 1,
+        err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyC, nC, 1,
                              GDT_Int32, 0, 0);
+        assert(err == CE_None);
 
         int nHeight;
         for(int j = 0;j < nC;j++)
@@ -376,11 +382,13 @@ void ninja::importSingleBand(GDALDataset *poDataset)
 
     //read in value at i, j and set dem value.
     double *padfScanline;
+    CPLErr err;
     padfScanline = new double[nC];
 
     for(int i = nR - 1;i >= 0;i--) {
-	poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
+        err = poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
 			 GDT_Float64, 0, 0);
+        assert(err == CE_None);
 	for(int j = 0;j < nC;j++) {
 	    input.dem.set_cellValue(nR - 1 - i, j, padfScanline[j]);
 	}
@@ -459,11 +467,13 @@ void ninja::importGeoTIFF(GDALDataset* poDataset)
 
     //read in value at i, j and set dem value.
     double* padfScanline;
+    CPLErr err;
     padfScanline = new double[nC];
 
     for (int i = nR - 1; i >= 0; i--) {
-        poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
+        err =poBand->RasterIO(GF_Read, 0, i, nC, 1, padfScanline, nC, 1,
             GDT_Float64, 0, 0);
+        assert(err == CE_None);
         for (int j = 0; j < nC; j++) {
             input.dem.set_cellValue(nR - 1 - i, j, padfScanline[j]);
         }
@@ -485,21 +495,25 @@ void ninja::importGeoTIFF(GDALDataset* poDataset)
         int* panScanlineCanopyC = new int[nC];
         int nHeight, nCanopy, nFuel;
 
+        CPLErr err;
         for (int i = nR - 1; i >= 0; i--)
         {
             //get fuel model band and write scanline
             poBand = poDataset->GetRasterBand(4);
-            poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineFuelM, nC, 1,
+            err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineFuelM, nC, 1,
                 GDT_Int32, 0, 0);
+            assert(err == CE_None);
             //if canopy fuels are there, get the associated data
                 //height
             poBand = poDataset->GetRasterBand(6);
-            poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyH, nC, 1,
+            err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyH, nC, 1,
                 GDT_Int32, 0, 0);
+            assert(err == CE_None);
             //cover
             poBand = poDataset->GetRasterBand(5);
-            poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyC, nC, 1,
+            err = poBand->RasterIO(GF_Read, 0, i, nC, 1, panScanlineCanopyC, nC, 1,
                 GDT_Int32, 0, 0);
+            assert(err == CE_None);
 
             for (int j = 0; j < nC; j++)
             {

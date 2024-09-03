@@ -133,8 +133,9 @@ bool NinjaFoam::simulate_wind()
     #else
     foamVersion = CPLGetConfigOption("WM_PROJECT_VERSION", "");
     #endif
-    CPLDebug("NINJAFOAM", CPLSPrintf("foamVersion = \"%s\"",foamVersion.c_str()));
-    
+    std::string message = CPLSPrintf("foamVersion = \"%s\"", foamVersion.c_str());
+    CPLDebug("NINJAFOAM", "%s", message.c_str());
+
     if(CSLTestBoolean(CPLGetConfigOption("WRITE_TURBULENCE", "FALSE")))
     {
         CPLDebug("NINJAFOAM", "Writing turbulence output...");
@@ -1920,6 +1921,8 @@ int NinjaFoam::SanitizeOutput()
     VSIFClose( fin );
     VSIFClose( fin2 );
     VSIFCloseL( fout );
+
+    return 0;
 }
 
 static int TransformGeoToPixelSpace( double *adfInvGeoTransform, double dfX,
@@ -3341,7 +3344,7 @@ void NinjaFoam::WriteOutputFiles()
 
                         // if output clipping was set by the user, don't buffer to overlap the DEM
                         // but only if writing atm file for farsite grids
-                        if(!input.outputBufferClipping > 0.0 && input.writeAtmFile == true)
+                        if (input.outputBufferClipping <= 0.0 && input.writeAtmFile)
                         {
                             //ensure grids cover original DEM extents for FARSITE
                             AsciiGrid<double> demGrid;

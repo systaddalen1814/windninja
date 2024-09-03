@@ -187,8 +187,10 @@ void wrfSurfInitialization::checkForValidData()
 
             //set the data
             padfScanline = new double[nXSize*nYSize];
-            poBand->RasterIO(GF_Read, 0, 0, nXSize, nYSize, padfScanline, nXSize, nYSize,
+            CPLErr err;
+            err = poBand->RasterIO(GF_Read, 0, 0, nXSize, nYSize, padfScanline, nXSize, nYSize,
                     GDT_Float64, 0, 0);
+            assert(err == CE_None);
             for(int k = 0;k < nXSize*nYSize; k++)
             {
                 //Check if value is no data (if no data value was defined in file)
@@ -640,7 +642,8 @@ void wrfSurfInitialization::setSurfaceGrids( WindNinjaInputs &input,
         OGRSpatialReference oSRS, *poLatLong;
         char *srcWKT = NULL;
         char* prj2 = (char*)projString.c_str();
-        oSRS.importFromWkt(&prj2);
+        const char* prj2_const = prj2;
+        oSRS.importFromWkt(&prj2_const);
         oSRS.exportToWkt(&srcWKT);
 
         CPLDebug("WX_MODEL_INITIALIZATION", "srcWKT= %s", srcWKT);

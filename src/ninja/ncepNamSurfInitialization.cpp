@@ -205,8 +205,10 @@ void ncepNamSurfInitialization::checkForValidData()
 
             //set the data
             padfScanline = new double[nXSize*nYSize];
-            poBand->RasterIO(GF_Read, 0, 0, nXSize, nYSize, padfScanline, nXSize, nYSize,
+            CPLErr err;
+            err = poBand->RasterIO(GF_Read, 0, 0, nXSize, nYSize, padfScanline, nXSize, nYSize,
                     GDT_Float64, 0, 0);
+            assert(err == CE_None);
             for(int k = 0;k < nXSize*nYSize; k++)
             {
                 //Check if value is no data (if no data value was defined in file)

@@ -429,6 +429,8 @@ bool WidgetDownloadDEM::demBoundsCheck()
                 return true;
         break;
     }
+
+        return false;
 }
 
 /**

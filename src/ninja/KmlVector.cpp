@@ -225,7 +225,8 @@ bool KmlVector::setOGR() {
   if(spd.prjString != "") {
     char *p = strdup(spd.prjString.c_str());
     char *q = p;
-    rc = oSourceSRS.importFromWkt(&p);
+    const char *p_const = p;
+    rc = oSourceSRS.importFromWkt(&p_const);
     free((void*)q);
     if(rc != OGRERR_NONE) {
       throw std::logic_error("cannot create SRS from DEM, kmz creation failed");

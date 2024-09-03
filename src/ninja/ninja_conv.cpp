@@ -283,7 +283,7 @@ char **NinjaVSIReadDirRecursive( const char *pszPathIn )
 
 static int NinjaUnlinkTreeRecurse( const char *pszPath )
 {
-    int i, n;
+    int i, n, ret;
     char **papszDirList = NULL;
     char *pszJoinedPath, *pszTmp;
     VSIStatBufL sStat;
@@ -296,7 +296,8 @@ static int NinjaUnlinkTreeRecurse( const char *pszPath )
         pszTmp = papszDirList[i];
         SKIP_DOT_AND_DOTDOT( pszTmp );
         pszJoinedPath = CPLStrdup( CPLFormFilename( pszPath, pszTmp, NULL ) );
-        VSIStatExL( pszJoinedPath, &sStat, 0 );
+        ret = VSIStatExL( pszJoinedPath, &sStat, 0 );
+        assert(ret == 0);
         if( VSI_ISDIR( sStat.st_mode ) )
         {
             NinjaUnlinkTreeRecurse( pszJoinedPath );

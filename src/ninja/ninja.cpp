@@ -4816,7 +4816,9 @@ void ninja::set_vtkOutFlag(bool flag)
 void ninja::set_outputPath(std::string path)
 {
     VSIStatBufL sStat;
-    VSIStatL( path.c_str(), &sStat );
+    int ret;
+    ret = VSIStatL( path.c_str(), &sStat );
+    assert(ret == 0);
     /*
     ** We just need a unique stub here, and instead of generating a random
     ** stub, we are using GenerateTempFile to be cross platform.  We are just

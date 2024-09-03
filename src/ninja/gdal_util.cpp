@@ -161,7 +161,8 @@ bool GDALGetBounds( GDALDataset *poDS, double *boundsLonLat )
     else
 	pszPrj = (char*)poDS->GetProjectionRef();
 
-    oSourceSRS.importFromWkt( &pszPrj );
+    const char* pszPrj_const = pszPrj;
+    oSourceSRS.importFromWkt( &pszPrj_const );
     oTargetSRS.SetWellKnownGeogCS( "WGS84" );
 #ifdef GDAL_COMPUTE_VERSION
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,0,0)
@@ -216,7 +217,8 @@ bool GDALTestSRS( GDALDataset *poDS )
     else
 	pszPrj = (char*) poDS->GetProjectionRef();
 
-    oSourceSRS.importFromWkt( &pszPrj );
+    const char* pszPrj_const = pszPrj;
+    oSourceSRS.importFromWkt( &pszPrj_const );
     oTargetSRS.SetWellKnownGeogCS( "WGS84" );
 #ifdef GDAL_COMPUTE_VERSION
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,0,0)
@@ -257,10 +259,11 @@ bool GDALHasNoData( GDALDataset *poDS, int band )
 	nDV = -9999.0;
 
     double *padfScanline;
-    padfScanline = new double[ncols];
+    CPLErr err;
+    new double[ncols];
     for( int i = 0;i < nrows;i++ ) {
-	poBand->RasterIO( GF_Read, 0, i, ncols, 1, padfScanline, ncols, 1,
-			  GDT_Float64, 0, 0 );
+      err = poBand->RasterIO(GF_Read, 0, i, ncols, 1, padfScanline, ncols, 1, GDT_Float64, 0, 0);
+      assert(err == CE_None);
 	for( int j = 0;j < ncols;j++ ) {
 	    if( CPLIsEqual( (float)padfScanline[j], (float)nDV ) )
             {
@@ -316,12 +319,12 @@ bool GDAL2AsciiGrid( GDALDataset *poDS, int band, AsciiGrid<double> &grid )
 			 adfGeoTransform[1], dfNoData, dfNoData );
     //set the data
     double *padfScanline;
+    CPLErr err;
     padfScanline = new double[nXSize];
     for(int i = nYSize - 1;i >= 0;i--) {
-
-	poBand->RasterIO(GF_Read, 0, i, nXSize, 1, padfScanline, nXSize, 1,
+        err = poBand->RasterIO(GF_Read, 0, i, nXSize, 1, padfScanline, nXSize, 1,
 			 GDT_Float64, 0, 0);
-
+        assert(err == CE_None);
 	for(int j = 0;j < nXSize;j++) {
 	    grid.set_cellValue(nYSize - 1 - i, j, padfScanline[j]);
 
@@ -377,7 +380,8 @@ bool GDALPointFromLatLon( double &x, double &y, GDALDataset *poSrcDS,
 	pszPrj = (char*)poSrcDS->GetProjectionRef();
 
     oSourceSRS.SetWellKnownGeogCS( datum );
-    oTargetSRS.importFromWkt( &pszPrj );
+    const char* pszPrj_const = pszPrj;
+    oTargetSRS.importFromWkt( &pszPrj_const );
 
 #ifdef GDAL_COMPUTE_VERSION
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,0,0)
@@ -415,7 +419,8 @@ bool GDALPointToLatLon( double &x, double &y, GDALDataset *poSrcDS,
     else
 	pszPrj = (char*)poSrcDS->GetProjectionRef();
 
-    oSourceSRS.importFromWkt( &pszPrj );
+    const char* pszPrj_const = pszPrj;
+    oSourceSRS.importFromWkt( &pszPrj_const );
     oTargetSRS.SetWellKnownGeogCS( datum );
 
 #ifdef GDAL_COMPUTE_VERSION
@@ -598,12 +603,14 @@ int GDALFillBandNoData(GDALDataset *poDS, int nBand, int nSearchPixels)
     double dfNoData = poBand->GetNoDataValue(NULL);
 
     double *padfScanline;
+    CPLErr err;
     padfScanline = (double *) CPLMalloc(sizeof(double)*nPixels);
     int nNoDataCount = 0;
     for(int i = 0;i < nLines;i++)
     {
-        GDALRasterIO(poBand, GF_Read, 0, i, nPixels, 1,
+        err = GDALRasterIO(poBand, GF_Read, 0, i, nPixels, 1,
                      padfScanline, nPixels, 1, GDT_Float64, 0, 0);
+        assert(err == CE_None);
         for(int j = 0; j < nPixels;j++)
         {
             if(CPLIsEqual(padfScanline[j], dfNoData))
@@ -673,7 +680,8 @@ std::string FetchTimeZone( double dfX, double dfY, const char *pszWkt )
         OGRCoordinateTransformation *poCT;
 
         oSourceSRS.SetWellKnownGeogCS( "WGS84" );
-        oTargetSRS.importFromWkt( (char**)&pszWkt );
+        const char* pszWkt_const = pszWkt;
+        oTargetSRS.importFromWkt( &pszWkt_const );
 
 #ifdef GDAL_COMPUTE_VERSION
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,0,0)
@@ -1004,12 +1012,14 @@ bool GDALWarpToUtm (const char* filename, GDALDatasetH& hSrcDS, GDALDatasetH& hD
     }
 
     double *padfScanline;
+    CPLErr err;
     padfScanline = (double *) CPLMalloc(sizeof(double)*nPixels);
     nNoDataCount = 0;
     for(int i = 0;i < nLines;i++)
     {
-        GDALRasterIO(hDstBand, GF_Read, 0, i, nPixels, 1, 
+        err = GDALRasterIO(hDstBand, GF_Read, 0, i, nPixels, 1,
                      padfScanline, nPixels, 1, GDT_Float64, 0, 0);
+        assert(err == CE_None);
         for(int j = 0; j < nPixels;j++)
         {
             if(CPLIsEqual(padfScanline[j], dfNoData))

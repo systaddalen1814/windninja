@@ -760,11 +760,13 @@ int NomadsWxModel::ClipNoData( GDALRasterBandH hBand, double dfNoData,
     int i, j, k;
     double *padfData;
     int nXSize, nYSize;
+    CPLErr err;
     nXSize = GDALGetRasterBandXSize( hBand );
     nYSize = GDALGetRasterBandYSize( hBand );
     padfData = (double*)CPLMalloc( sizeof( double ) * nXSize );
-    GDALRasterIO( hBand, GF_Read, 0, 0, nXSize, 1,
+    err = GDALRasterIO( hBand, GF_Read, 0, 0, nXSize, 1,
                   padfData, nXSize, 1, GDT_Float64, 0, 0 );
+    assert(err == CE_None);
     i = k = j = 0;
     while( padfData[i] == dfNoData && i < nXSize )
         i++;
@@ -776,8 +778,9 @@ int NomadsWxModel::ClipNoData( GDALRasterBandH hBand, double dfNoData,
     if( pnColsToCull )
         *pnColsToCull = j < k ? j : k;
     padfData = (double*)CPLRealloc( padfData, sizeof( double ) * nYSize );
-    GDALRasterIO( hBand, GF_Read, 0, 0, 1, nYSize,
+    err = GDALRasterIO( hBand, GF_Read, 0, 0, 1, nYSize,
                   padfData, 1, nYSize, GDT_Float64, 0, 0 );
+    assert(err == CE_None);
     i = k = j = 0;
     while( padfData[i] == dfNoData && i < nYSize )
         i++;
