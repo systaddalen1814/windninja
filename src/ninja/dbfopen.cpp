@@ -187,7 +187,6 @@ static char rcsid[] =
 
 #include "shapefil.h"
 
-#include <math.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
@@ -458,8 +457,7 @@ DBFClose(DBFHandle psDBF)
 	unsigned char		abyFileHeader[32];
 
 	fseek( psDBF->fp, 0, 0 );
-	fread( abyFileHeader, 32, 1, psDBF->fp );
-
+        size_t bytesRead = fread( abyFileHeader, 32, 1, psDBF->fp );
 	abyFileHeader[1] = 95;			/* YY */
 	abyFileHeader[2] = 7;			/* MM */
 	abyFileHeader[3] = 26;			/* DD */
@@ -1009,8 +1007,7 @@ static int DBFWriteAttribute(DBFHandle psDBF, int hEntity, int iField,
 	nRecordOffset = psDBF->nRecordLength * hEntity + psDBF->nHeaderLength;
 
 	fseek( psDBF->fp, nRecordOffset, 0 );
-	fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
-
+        size_t bytesRead = fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
 	psDBF->nCurrentRecord = hEntity;
     }
 
@@ -1178,9 +1175,8 @@ int DBFWriteAttributeDirectly(DBFHandle psDBF, int hEntity, int iField,
 	nRecordOffset = psDBF->nRecordLength * hEntity + psDBF->nHeaderLength;
 
 	fseek( psDBF->fp, nRecordOffset, 0 );
-	fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
-
-	psDBF->nCurrentRecord = hEntity;
+        size_t bytesRead = fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
+        psDBF->nCurrentRecord = hEntity;
     }
 
     pabyRec = (unsigned char *) psDBF->pszCurrentRecord;
@@ -1324,7 +1320,7 @@ DBFWriteTuple(DBFHandle psDBF, int hEntity, void * pRawTuple )
 	nRecordOffset = psDBF->nRecordLength * hEntity + psDBF->nHeaderLength;
 
 	fseek( psDBF->fp, nRecordOffset, 0 );
-	fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
+        size_t bytesRead = fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
 
 	psDBF->nCurrentRecord = hEntity;
     }
@@ -1368,7 +1364,7 @@ DBFReadTuple(DBFHandle psDBF, int hEntity )
 	nRecordOffset = psDBF->nRecordLength * hEntity + psDBF->nHeaderLength;
 
 	fseek( psDBF->fp, nRecordOffset, 0 );
-	fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
+        size_t bytesRead = fread( psDBF->pszCurrentRecord, psDBF->nRecordLength, 1, psDBF->fp );
 
 	psDBF->nCurrentRecord = hEntity;
     }

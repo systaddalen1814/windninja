@@ -434,7 +434,7 @@ SHPOpen( const char * pszLayer, const char * pszAccess )
 /*  Read the file size from the SHP file.				*/
 /* -------------------------------------------------------------------- */
     pabyBuf = (uchar *) malloc(100);
-    fread( pabyBuf, 100, 1, psSHP->fpSHP );
+    size_t bytesRead = fread( pabyBuf, 100, 1, psSHP->fpSHP );
 
     psSHP->nFileSize = (pabyBuf[24] * 256 * 256 * 256
 			+ pabyBuf[25] * 256 * 256
@@ -444,7 +444,7 @@ SHPOpen( const char * pszLayer, const char * pszAccess )
 /* -------------------------------------------------------------------- */
 /*  Read SHX file Header info                                           */
 /* -------------------------------------------------------------------- */
-    fread( pabyBuf, 100, 1, psSHP->fpSHX );
+    bytesRead = fread( pabyBuf, 100, 1, psSHP->fpSHX );
 
     if( pabyBuf[0] != 0 
         || pabyBuf[1] != 0 
@@ -523,7 +523,7 @@ SHPOpen( const char * pszLayer, const char * pszAccess )
         (int *) malloc(sizeof(int) * MAX(1,psSHP->nMaxRecords) );
 
     pabyBuf = (uchar *) malloc(8 * MAX(1,psSHP->nRecords) );
-    fread( pabyBuf, 8, psSHP->nRecords, psSHP->fpSHX );
+    bytesRead = fread( pabyBuf, 8, psSHP->nRecords, psSHP->fpSHX );
 
     for( i = 0; i < psSHP->nRecords; i++ )
     {
@@ -1298,7 +1298,7 @@ SHPReadObject( SHPHandle psSHP, int hEntity )
 /*      Read the record.                                                */
 /* -------------------------------------------------------------------- */
     fseek( psSHP->fpSHP, psSHP->panRecOffset[hEntity], 0 );
-    fread( psSHP->pabyRec, psSHP->panRecSize[hEntity]+8, 1, psSHP->fpSHP );
+    size_t bytesRead = fread( psSHP->pabyRec, psSHP->panRecSize[hEntity]+8, 1, psSHP->fpSHP );
 
 /* -------------------------------------------------------------------- */
 /*	Allocate and minimally initialize the object.			*/

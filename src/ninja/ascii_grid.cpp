@@ -335,7 +335,7 @@ void AsciiGrid<T>::read_Grid(const std::string inputFile)
     if((fin = fopen(inputFile.c_str(), "r")) == NULL)
         throw std::runtime_error("No input file found in AsciiGrid<T>::read_Grid().");
 
-    fscanf(fin, "%s", krap);
+    int ret = fscanf(fin, "%s", krap);
     kkrap.assign(krap);
     if((kkrap!="ncols") && (kkrap!="NCOLS"))
         throw std::runtime_error("File does not appear to be in the correct format in AsciiGrid<T>::read_Grid().");
@@ -348,18 +348,18 @@ void AsciiGrid<T>::read_Grid(const std::string inputFile)
     T value;
     string valueFmt = dataFormat<T>("%<T>");
 
-    fscanf(fin, "%d", &nCols);
-    fscanf(fin, "%s %d", krap, &nRows);
-    fscanf(fin, "%s %lf", krap, &xllCorner);
-    fscanf(fin, "%s %lf", krap, &yllCorner);
-    fscanf(fin, "%s %lf", krap, &cellSize);
-    fscanf(fin, noDataFmt.c_str(), krap, &noDataValue);
+    ret = fscanf(fin, "%d", &nCols);
+    ret = fscanf(fin, "%s %d", krap, &nRows);
+    ret = fscanf(fin, "%s %lf", krap, &xllCorner);
+    ret = fscanf(fin, "%s %lf", krap, &yllCorner);
+    ret = fscanf(fin, "%s %lf", krap, &cellSize);
+    ret = fscanf(fin, noDataFmt.c_str(), krap, &noDataValue);
 
     data.setMatrix(nRows,nCols,noDataValue);
 
     for(int i = nRows - 1;i >= 0;i--) {
         for (int j = 0;j < nCols;j++) {
-            fscanf(fin, valueFmt.c_str(), &value);
+            ret = fscanf(fin, valueFmt.c_str(), &value);
             data(i,j) = T(value);
         }
     }

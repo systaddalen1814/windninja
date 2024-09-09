@@ -2873,7 +2873,7 @@ void ninja::writeOutputFiles()
 
                     // if output clipping was set by the user, don't buffer to overlap the DEM
                     // but only if writing atm file for farsite grids
-                    if(!input.outputBufferClipping > 0.0 && input.writeAtmFile == true)
+                    if(input.outputBufferClipping <= 0.0 && input.writeAtmFile == true)
                     {
                         //ensure grids cover original DEM extents for FARSITE
                         AsciiGrid<double> demGrid;
@@ -3337,7 +3337,7 @@ void ninja::set_inputPointsFilename(std::string filename)
     points = fopen( input.inputPointsFilename.c_str(), "r" );
 
     char datum [6];
-    fscanf(points, "%5s\n.", datum);
+    int ret = fscanf(points, "%5s\n.", datum);
 
     if(!EQUAL(datum, "WGS84") && !EQUAL(datum, "NAD83") && !EQUAL(datum, "NAD27")){
         throw std::runtime_error(std::string("The datum must be specified as either WGS84, NAD83, or NAD27 in ninja::set_inputPointsFilename")

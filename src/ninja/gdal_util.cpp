@@ -260,7 +260,7 @@ bool GDALHasNoData( GDALDataset *poDS, int band )
 
     double *padfScanline;
     CPLErr err;
-    new double[ncols];
+    padfScanline = new double[ncols];
     for( int i = 0;i < nrows;i++ ) {
       err = poBand->RasterIO(GF_Read, 0, i, ncols, 1, padfScanline, ncols, 1, GDT_Float64, 0, 0);
       assert(err == CE_None);

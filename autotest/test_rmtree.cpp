@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE( rmtree_sym_1 )
     rc = VSIMkdir( pszPath, 0777 );
     pszTarget = CPLFormFilename( pszPath, "c", ".txt" );
     Touch( pszTarget );
-    symlink( pszTarget, pszSym );
+    int result = symlink( pszTarget, pszSym );
     rc = NinjaUnlinkTree( pszTmpPath );
     VSIStatBufL sStat;
     BOOST_CHECK( VSIStatExL( pszTmpPath, &sStat, VSI_STAT_EXISTS_FLAG ) != 0 );
@@ -97,9 +97,9 @@ BOOST_AUTO_TEST_CASE( rmtree_sym_2 )
     rc = VSIMkdir( pszPath, 0777 );
     pszTarget = CPLFormFilename( pszPath, "c", ".txt" );
     Touch( pszTarget );
-    symlink( pszTarget, pszSym );
+    int result = symlink( pszTarget, pszSym );
     pszSym = CPLFormFilename( pszTmpPath, "s2", NULL );
-    symlink( pszTarget, pszSym );
+    result = symlink( pszTarget, pszSym );
     rc = NinjaUnlinkTree( pszTmpPath );
     VSIStatBufL sStat;
     BOOST_CHECK( VSIStatExL( pszTmpPath, &sStat, VSI_STAT_EXISTS_FLAG ) != 0 );
@@ -116,11 +116,11 @@ BOOST_AUTO_TEST_CASE( rmtree_sym_3 )
     rc = VSIMkdir( pszPath, 0777 );
     pszTarget = CPLFormFilename( pszPath, "c", ".txt" );
     Touch( pszTarget );
-    symlink( pszTarget, pszSym );
+    int result = symlink( pszTarget, pszSym );
     pszSym = CPLFormFilename( pszPath, "s3", NULL );
-    symlink( pszTarget, pszSym );
+    result = symlink( pszTarget, pszSym );
     pszSym = CPLFormFilename( pszTmpPath, "s2", NULL );
-    symlink( pszTarget, pszSym );
+    result = symlink( pszTarget, pszSym );
     rc = NinjaUnlinkTree( pszTmpPath );
     VSIStatBufL sStat;
     BOOST_CHECK( VSIStatExL( pszTmpPath, &sStat, VSI_STAT_EXISTS_FLAG ) != 0 );
